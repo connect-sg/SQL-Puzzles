@@ -1,0 +1,40 @@
+Write a SQL query to find all numbers that appear at least three times consecutively.
+
++----+-----+
+| Id | Num |
++----+-----+
+| 1  |  1  |
+| 2  |  1  |
+| 3  |  1  |
+| 4  |  2  |
+| 5  |  1  |
+| 6  |  2  |
+| 7  |  2  |
++----+-----+
+For example, given the above Logs table, 1 is the only number that appears consecutively for at least three times.
+
++-----------------+
+| ConsecutiveNums |
++-----------------+
+| 1               |
++-----------------+
+
+
+Query:
+select l1.num as consecutiveNums from logs l1 join logs l2 
+                                              on l1.num=l2.num and l1.id=l2.id+1
+                                            join logs l3 
+                                              on l1.num=l3.num and l1.id=l3.id+2
+                                              
+                                              
+                                              
+                                              OR
+
+select final.num as ConsecutiveNums from (
+select l1.num,l1.id from logs l1 join 
+(
+select lead(num,2) over(order by id) as l,id from logs) 
+log1 on l1.num=log1.l  and l1.id=log1.id
+join (
+select lead(num,1) over(order by id) as l2,id from logs) 
+log2 on log1.l = log2.l2 and log1.id=log2.id) final
