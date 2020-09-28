@@ -19,3 +19,10 @@ Query:
 select e1.salary as secondHighestSalary from employee e1 where 
 2=(select count(salary) from employee e 
                              where e.salary>=e1.salary)
+
+
+OR
+
+
+select max(e.salary) as SecondHighestSalary from employee e 
+                                                 where e.salary <(select max(salary) from employee )
