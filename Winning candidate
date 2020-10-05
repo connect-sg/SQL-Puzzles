@@ -34,3 +34,9 @@ Write a sql to find the name of the winning candidate, the above example will re
 Notes:
 You may assume there is no tie, in other words there will be at most one winning candidate.
 
+
+Query:
+with cte as (
+select c.name,count(v.CandidateId) as cnt from candidate c join vote v on c.id=v.CandidateId group by c.name ) 
+select name from cte where cnt in (select max(cnt) from cte);   
+
