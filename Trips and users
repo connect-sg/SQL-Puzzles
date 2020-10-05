@@ -43,12 +43,11 @@ For the above tables, your SQL query should return the following rows with the c
 ----------------------------------------------------------------------------------------------------
 Query :
 
-select t.request_at,coalesce(min(a.cnt)/ count(t.status),0) as cancelledrate from
+select t.request_at as day,coalesce(min(a.cnt)/ (count(t.status)-1),0) as cancelledrate from
 (
     select min(b.cnt) as cnt, b.request_at from (
 select coalesce(count(t.status),0) as cnt, t.request_at from trips t join users u on t.client_id=u.users_id and u.banned='No' and t.status like 'cancelled%' group by status union 
 select coalesce(count(t.status),0) as cnt, t.request_at from trips t join users u on t.driver_id=u.users_id and u.banned='No' and t.status like 'cancelled%' group by status
 ) b group by b.request_at 
-) a right join trips t on a.request_at =t.request_at and (t.client_id not in (select users_id from users where banned ='Yes' )
-and t.driver_id not in (select users_id from users where banned ='Yes' ))
-                                                    group by t.request_at
+) a right join trips t on a.request_at =t.request_at
+ group by t.request_at
