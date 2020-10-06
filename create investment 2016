@@ -1,0 +1,5 @@
+Query:
+
+select sum(i.tiv_2016) from insurance i right join   
+(select i.lon,i.lat,count(i.PID) as cnr from insurance i  group by i.lon,i.lat having count(i.pid)=1) a on i.lat =a.lat and i.lon =a.lon 
+--a inner join insurance b on  a.ipid=b.ipad group by  b.tiv_2015 having count(b.tiv_2015) 
