@@ -43,7 +43,7 @@ For the above tables, your SQL query should return the following rows with the c
 ----------------------------------------------------------------------------------------------------
 Query :
 
-select cmplt.datetrip, coalesce(cncl.cancelled/cmplt.completed,0) as cancelled_rate from
+select cmplt.datetrip as Day, cast(coalesce(cncl.cancelled/cmplt.completed,0) as decimal(3,2)) as 'cancellation rate' from
 (
     select request_at as datetrip, coalesce(count(status),0) as completed from trips
                                              where client_id in (select users_id from users 
