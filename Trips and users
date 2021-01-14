@@ -56,3 +56,24 @@ select cmplt.datetrip as Day, cast(coalesce(cncl.cancelled/cmplt.completed,0) as
                  where banned='No') and driver_id in (select users_id from users where banned='No') and status like 'cancelled%' group by request_at
 ) as cncl               
                  on cmplt.datetrip =cncl.datetrip
+
+
+
+
+
+
+Query 2:
+
+select b.request_at as Day, convert(coalesce(a.cancelled/b.completed,0),decimal(3,2)) as "cancellation Rate"  from
+(
+ select a.request_at,coalesce(count(a.status),0) as cancelled from trips a
+  where a.status like 'cancelled%' and (a.client_id not in (select users_id from users where banned='yes') and a.driver_id not in (select users_id from users where banned='yes'))
+ group by a.request_at) a 
+ 
+ right join 
+
+(
+select a.request_at,coalesce(count(a.status),0) as completed from trips a 
+where
+  (a.client_id not in (select users_id from users where banned='Yes') and a.driver_id not in (select users_id from users where banned='yes')) 
+ group by a.request_at) b
