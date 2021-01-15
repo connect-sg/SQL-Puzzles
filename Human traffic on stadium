@@ -55,3 +55,16 @@ select s4.id from stadium s1
                                on s3.people>100 and s2.id=s3.id+1
                               join stadium s4
                                on s4.people>100 and s3.id=s4.id+1)
+                               
+                               
+Query 2:
+select s.id,s.visit_date,s.people from stadium s  join (
+select s1.id as id1, s4.id as id2
+from stadium s1 join stadium s2 
+                on s1.people>100 and s2.people>100 and s1.id=s2.id+1
+                     join stadium s3
+                       on s3.people>100 and s2.id=s3.id+1
+                             join stadium s4
+                               on s4.people>100 and s3.id=s4.id+1)b
+on s.id between b.id2 and b.id1
+order by id 
