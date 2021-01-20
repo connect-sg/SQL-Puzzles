@@ -35,6 +35,6 @@ select b.install_dt,
 	   
        coalesce(convert(decimal(3,2),((b.installs-lead(b.installs) over(order by b.install_dt))/b.installs)),0) as day1_retention from(
 select a.event_date as install_dt,
-       count(a.player_id) as installs
+       convert(decimal(3,2),count(a.player_id)) as installs
 from activity2 a 
 group by a.event_date) b
