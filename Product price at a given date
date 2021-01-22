@@ -1,0 +1,54 @@
+Write an SQL query to find the prices of all products on 2019-08-16. Assume the price of all products before any change is 10.
+
+The query result format is in the following example:
+
+Products table:
++------------+-----------+-------------+
+| product_id | new_price | change_date |
++------------+-----------+-------------+
+| 1          | 20        | 2019-08-14  |
+| 2          | 50        | 2019-08-14  |
+| 1          | 30        | 2019-08-15  |
+| 1          | 35        | 2019-08-16  |
+| 2          | 65        | 2019-08-17  |
+| 3          | 20        | 2019-08-18  |
++------------+-----------+-------------+
+
+Result table:
++------------+-------+
+| product_id | price |
++------------+-------+
+| 2          | 50    |
+| 1          | 35    |
+| 3          | 10    |
++------------+-------+
+Query:
+
+--create table products (product_id int, new_price int, change_date date)
+--insert into products values 
+--(1,20,'2019-08-14'),
+--(2,50,'2019-08-14'),
+--(1,30,'2019-08-15'),
+--(1,35,'2019-08-16'),
+--(2,65,'2019-08-17'),
+--(3,20,'2019-08-18')
+
+
+with query as (
+		select p.product_id,p.new_price,p.change_date
+		from products p
+		where p.change_date=(select max(change_date)
+							from products 
+							where product_id=p.product_id and change_date<='2019-08-16'
+							)
+			)
+
+
+select p.product_id,  
+       case when p.change_date<='2019-08-16'  then p.new_price 
+	   else 10 end as price 
+from (
+select * from query 
+union
+select product_id,new_price,change_date from products 
+where product_id not in (select product_id from query)) p
