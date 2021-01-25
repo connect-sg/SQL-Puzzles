@@ -1,0 +1,46 @@
+Write an SQL query to find the percentage of immediate orders in the first orders of all customers, rounded to 2 decimal places.
+
+The query result format is in the following example:
+
+Delivery table:
++-------------+-------------+------------+-----------------------------+
+| delivery_id | customer_id | order_date | customer_pref_delivery_date |
++-------------+-------------+------------+-----------------------------+
+| 1           | 1           | 2019-08-01 | 2019-08-02                  |
+| 2           | 2           | 2019-08-02 | 2019-08-02                  |
+| 3           | 1           | 2019-08-11 | 2019-08-12                  |
+| 4           | 3           | 2019-08-24 | 2019-08-24                  |
+| 5           | 3           | 2019-08-21 | 2019-08-22                  |
+| 6           | 2           | 2019-08-11 | 2019-08-13                  |
+| 7           | 4           | 2019-08-09 | 2019-08-09                  |
++-------------+-------------+------------+-----------------------------+
+
+Result table:
++----------------------+
+| immediate_percentage |
++----------------------+
+| 50.00                |
++----------------------+
+The customer id 1 has a first order with delivery id 1 and it is scheduled.
+The customer id 2 has a first order with delivery id 2 and it is immediate.
+The customer id 3 has a first order with delivery id 5 and it is scheduled.
+The customer id 4 has a first order with delivery id 7 and it is immediate.
+Hence, half the customers have immediate first orders.
+
+Query:
+--truncate table delivery;
+--insert into delivery values
+--(1,1,'2019-08-01','2019-08-02'),
+--(2,2,'2019-08-02','2019-08-02'),
+--(3,1,'2019-08-11','2019-08-12'),
+--(4,3,'2019-08-24','2019-08-24'),
+--(5,3,'2019-08-21','2019-08-22'),
+--(6,2,'2019-08-11','2019-08-13'),
+--(7,4,'2019-08-09','2019-08-09')
+
+select convert(decimal(3,2),count(distinct d.customer_id))/convert(decimal(3,2),(select count(distinct customer_id) from delivery)) * 100 as cnt
+from delivery d
+where d.order_date=d.customer_pref_delivery_date
+and d.order_date =(select min(order_date)
+                  from delivery
+                  where customer_id =d.customer_id)
