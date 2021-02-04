@@ -1,0 +1,80 @@
+Write an SQL query to get the names of products with greater than or equal to 100 units ordered in February 2020 and their amount.
+
+Return result table in any order.
+
+The query result format is in the following example:
+
+Products table:
++-------------+-----------------------+------------------+
+| product_id  | product_name          | product_category |
++-------------+-----------------------+------------------+
+| 1           | Leetcode Solutions    | Book             |
+| 2           | Jewels of Stringology | Book             |
+| 3           | HP                    | Laptop           |
+| 4           | Lenovo                | Laptop           |
+| 5           | Leetcode Kit          | T-shirt          |
++-------------+-----------------------+------------------+
+
+Orders table:
++--------------+--------------+----------+
+| product_id   | order_date   | unit     |
++--------------+--------------+----------+
+| 1            | 2020-02-05   | 60       |
+| 1            | 2020-02-10   | 70       |
+| 2            | 2020-01-18   | 30       |
+| 2            | 2020-02-11   | 80       |
+| 3            | 2020-02-17   | 2        |
+| 3            | 2020-02-24   | 3        |
+| 4            | 2020-03-01   | 20       |
+| 4            | 2020-03-04   | 30       |
+| 4            | 2020-03-04   | 60       |
+| 5            | 2020-02-25   | 50       |
+| 5            | 2020-02-27   | 50       |
+| 5            | 2020-03-01   | 50       |
++--------------+--------------+----------+
+
+Result table:
++--------------------+---------+
+| product_name       | unit    |
++--------------------+---------+
+| Leetcode Solutions | 130     |
+| Leetcode Kit       | 100     |
++--------------------+---------+
+
+
+
+Query:
+--create table orders1(product_id int, order_date date, unit int)
+--insert into orders1 
+--values
+--( 1            , '2020-02-05'   , 60       ),
+--( 1            , '2020-02-10'   , 70       ),
+--( 2            , '2020-01-18'   , 30       ),
+--( 2            , '2020-02-11'   , 80       ),
+--( 3            , '2020-02-17'   , 2        ),
+--( 3            , '2020-02-24'   , 3        ),
+--( 4            , '2020-03-01'   , 20       ),
+--( 4            , '2020-03-04'   , 30       ),
+--( 4            , '2020-03-04'   , 60       ),
+--( 5            , '2020-02-25'   , 50       ),
+--( 5            , '2020-02-27'   , 50       ),
+--( 5            , '2020-03-01'   , 50       )
+
+--create table products1(product_id int, product_name varchar(50), product_category varchar(50))
+--insert into products1
+--values
+--(1,'LeetcodeSolutions','Book'),
+--(2,'JewelsofStringology','Book'),
+--(3,'HP','Laptop'),
+--(4,'Lenovo','Laptop'),
+--(5,'LeetcodeKit','T-shirt')
+
+
+
+select p.product_name,
+       sum(o.unit)
+from products1 p
+join orders1 o
+on p.product_id=o.product_id and month(o.order_date)=2
+group by p.product_name
+having sum(o.unit)>=100
