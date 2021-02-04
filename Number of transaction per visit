@@ -1,0 +1,113 @@
+Write an SQL query to find how many users visited the bank and didn’t do any transactions, how many visited the bank and did one transaction and so on.
+
+The result table will contain two columns transactions_count which is the number of transactions done in one visit and visits_count which is the corresponding number of users who did transactions_count in one visit to the bank. transactions_count should take all values from 0 to max(transactions_count) done by one or more users.
+
+Order the result table by transactions_count.
+
+The query result format is in the following example:
+
+Visits table:
++---------+------------+
+| user_id | visit_date |
++---------+------------+
+| 1       | 2020-01-01 |
+| 2       | 2020-01-02 |
+| 12      | 2020-01-01 |
+| 19      | 2020-01-03 |
+| 1       | 2020-01-02 |
+| 2       | 2020-01-03 |
+| 1       | 2020-01-04 |
+| 7       | 2020-01-11 |
+| 9       | 2020-01-25 |
+| 8       | 2020-01-28 |
++---------+------------+
+Transactions table:
++---------+------------------+--------+
+| user_id | transaction_date | amount |
++---------+------------------+--------+
+| 1       | 2020-01-02       | 120    |
+| 2       | 2020-01-03       | 22     |
+| 7       | 2020-01-11       | 232    |
+| 1       | 2020-01-04       | 7      |
+| 9       | 2020-01-25       | 33     |
+| 9       | 2020-01-25       | 66     |
+| 8       | 2020-01-28       | 1      |
+| 9       | 2020-01-25       | 99     |
++---------+------------------+--------+
+Result table:
++--------------------+--------------+
+| transactions_count | visits_count |
++--------------------+--------------+
+| 0                  | 4            |
+| 1                  | 5            |
+| 2                  | 0            |
+| 3                  | 1            |
++--------------------+--------------+
+Users 1, 2, 12 and 19 visited the bank in 2020-01-01, 2020-01-02, 2020-01-01 and 2020-01-03 respectively, and didn't do any transactions.
+So we have visits_count = 4 for transactions_count = 0.
+Users 2, 7 and 8 visited the bank in 2020-01-03, 2020-01-11 and 2020-01-28 respectively, and did one transaction.
+User 1 Also visited the bank in 2020-01-02 and 2020-01-04 and did one transaction each day.
+So we have total visits_count = 5 for transactions_count = 1.
+For transactions_count = 2 we don't have any users who visited the bank and did two transactions.
+For transactions_count = 3 we have user 9 who visited the bank in 2020-01-25 and did three transactions.
+Note that we stopped at transactions_count = 3 as this is the maximum number of transactions done by one user in one vis
+
+Query:
+--create table visits(user_id int, visit_date date)
+--insert into visits
+--values
+--(1,'2020-01-01'),
+--(2,'2020-01-02'),
+--(12,'2020-01-01'),
+--(19,'2020-01-03'),
+--(1,'2020-01-02'),
+--(2,'2020-01-03'),
+--(1,'2020-01-04'),
+--(7,'2020-01-11'),
+--(9,'2020-01-25'),
+--(8,'2020-01-28')
+
+
+--create table transactions_1(user_id int,transaction_date date,amount int)
+--insert into transactions_1
+--values
+--(1,'2020-01-02',120),
+--(2,'2020-01-03',22),
+--(7,'2020-01-11',232),
+--(1,'2020-01-04',7),
+--(9,'2020-01-25',33),
+--(9,'2020-01-25',66),
+--(8,'2020-01-28',1),
+--(9,'2020-01-25',99)
+
+--+--------------------+--------------+
+--| transactions_count | visits_count |
+--+--------------------+--------------+
+--| 0                  | 4            |
+--| 1                  | 5            |
+--| 2                  | 0            |
+--| 3                  | 1            |
+--+--------------------+--------------+
+select t.number,coalesce(c.visit,0) from tranx t left join (
+select  case when b.trans=0 then b.trans when b.visits!=b.trans  then b.visits  else b.trans end as trans, 
+        case when b.trans=0  then b.visits else count(b.trans) end as visit from (
+			select count(a.visit) as visits, 
+			       count(distinct a.trans) as trans from (
+								select t.transaction_date,
+								       v.visit_date,
+									   v.user_id as visit,
+									   t.user_id as trans from visits v
+										 full join transactions_1 t 
+										 on v.visit_date=t.transaction_date and v.user_id=t.user_id) a
+			group by a.transaction_date) b
+group by b.trans, b.visits) c 
+on t.number=c.trans;
+
+
+select count(*) from transactions_1 group by transaction_date
+
+
+--create table tranx(number int)
+--insert into tranx values(0),(1),(2),(3),(4)
+
+--delete from tranx where number =4
