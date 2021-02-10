@@ -1,0 +1,61 @@
+Write an SQL query to show the second most recent activity of each user.
+
+If the user only has one activity, return that one.
+
+
+ 
+A user can’t perform more than one activity at the same time. Return the result table in any order.
+
+The query result format is in the following example:
+
+UserActivity table:
++------------+--------------+-------------+-------------+
+| username   | activity     | startDate   | endDate     |
++------------+--------------+-------------+-------------+
+| Alice      | Travel       | 2020-02-12  | 2020-02-20  |
+| Alice      | Dancing      | 2020-02-21  | 2020-02-23  |
+| Alice      | Travel       | 2020-02-24  | 2020-02-28  |
+| Bob        | Travel       | 2020-02-11  | 2020-02-18  |
++------------+--------------+-------------+-------------+
+
+Result table:
++------------+--------------+-------------+-------------+
+| username   | activity     | startDate   | endDate     |
++------------+--------------+-------------+-------------+
+| Alice      | Dancing      | 2020-02-21  | 2020-02-23  |
+| Bob        | Travel       | 2020-02-11  | 2020-02-18  |
++------------+--------------+-------------+-------------+
+
+The most recent activity of Alice is Travel from 2020-02-24 to 2020-02-28, before that she was dancing from 2020-02-21 to 2020-02-23.
+Bob only has one record, we just take that one.
+
+
+
+Query:
+--create table useractivity(username varchar(50), activity varchar(50), startDate date, endDate date)
+--insert into useractivity
+--values
+--('Alice','Travel','2020-02-12','2020-02-20'),
+--('Alice','Dancing','2020-02-21','2020-02-23'),
+--('Alice','Travel','2020-02-24','2020-02-28'),
+--('Bob','Travel','2020-02-11','2020-02-18')
+
+select u.username, 
+       u.activity,  
+	   u.startDate, 
+	   u.endDate from useractivity u 
+	   join (
+					select username, 
+					max(startdate) as startdate, 
+					max(endDate) as endDate
+					from useractivity 
+					where startDate not in  (select case when count(username)!=1 then max(startdate) 
+					                                else '01/01/1900' end as sdate 
+													from useractivity 
+													group by username)
+					group by username ) b
+		on u.username=b.username and 
+		u.startDate=b.startDate and 
+		u.endDate=b.endDate
+
+
