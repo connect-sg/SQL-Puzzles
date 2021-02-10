@@ -1,0 +1,119 @@
+
+Write an SQL query to report the Total sales amount of each item for each year, with corresponding product name, product_id, product_name and report_year.
+
+Dates of the sales years are between 2018 to 2020. Return the result table ordered by product_id and report_year.
+
+
+ 
+The query result format is in the following example:
+
+Product table:
++------------+--------------+
+| product_id | product_name |
++------------+--------------+
+| 1          | LC Phone     |
+| 2          | LC T-Shirt   |
+| 3          | LC Keychain  |
++------------+--------------+
+
+Sales table:
++------------+--------------+-------------+---------------------+
+| product_id | period_start | period_end  | average_daily_sales |
++------------+--------------+-------------+---------------------+
+| 1          | 2019-01-25   | 2019-02-28  | 100                 |
+| 2          | 2018-12-01   | 2020-01-01  | 10                  |
+| 3          | 2019-12-01   | 2020-01-31  | 1                   |
++------------+--------------+-------------+---------------------+
+
+Result table:
++------------+--------------+-------------+--------------+
+| product_id | product_name | report_year | total_amount |
++------------+--------------+-------------+--------------+
+| 1          | LC Phone     |    2019     | 3500         |
+| 2          | LC T-Shirt   |    2018     | 310          |
+| 2          | LC T-Shirt   |    2019     | 3650         |
+| 2          | LC T-Shirt   |    2020     | 10           |
+| 3          | LC Keychain  |    2019     | 31           |
+| 3          | LC Keychain  |    2020     | 31           |
++------------+--------------+-------------+--------------+
+LC Phone was sold for the period of 2019-01-25 to 2019-02-28, and there are 35 days for this period. Total amount 35*100 = 3500. 
+LC T-shirt was sold for the period of 2018-12-01 to 2020-01-01, and there are 31, 365, 1 days for years 2018, 2019 and 2020 respectively.
+LC Keychain was sold for the period of 2019-12-01 to 2020-01-31, and there are 31, 31 days for years 2019 and 2020 
+
+Query:
+
+--create table sales_1(product_id int, period_start date, period_end date, average_daily_sales int)
+--insert into sales_1
+--values
+--(1,'2019-01-25','2019-02-28',100),
+--(2,'2018-12-01','2020-01-01',10),
+--(3,'2019-12-01','2020-01-31',1)
+
+--create table product(product_id int, product_name varchar(50))
+--insert into product
+--values
+--(1,'LCPhone'),
+--(2,'LCT-Shirt'),
+--(3,'LCKeychain')
+
+with cte  as (
+select a.product_id, 
+			year(a.period_start) as y1,
+			case when a.dt!=0 then year(DATEADD(year,a.dt-1,a.period_start)) 
+			else year(a.period_start) end  as y2,
+			year(a.period_end) as y3  
+from (
+		select s.product_id, 
+		s.period_start,
+		s.period_end,
+				datediff(year, s.period_start,s.period_end) as dt
+		from sales_1 s ) a)
+
+
+
+select  p.product_id,
+		p.product_name,
+		e.report_year,
+		e.total_amount from product p join (
+select  d.product_id,
+		year(d.startdate) as report_year, 
+		d.startdate,
+		d.enddate,
+		case when year(d.startdate)!=year(d.enddate) then  datediff(day, d.startdate,d.enddate)* d.average_daily_sales  
+		     else datediff(day, d.startdate,dateadd(day,1,d.enddate))* d.average_daily_sales  
+        end as total_amount
+from(
+select 
+c.product_id, 
+       case when c.dt<c.period_start then c.period_start 
+	        else c.dt 
+	   end as startdate, 
+       case when c.lead_dt<c.period_end and c.lead_dt >c.period_start then c.lead_dt 
+	        else c.period_end
+	   end as enddate,
+	   c.period_start,
+	   c.period_end,
+	   c.average_daily_sales 
+	   from (
+select  s.product_id,
+		datefromparts(b.yr,01,01) as dt, 
+		lead(datefromparts(b.yr,01,01),1) over( partition by b.product_id order by b.product_id) as lead_dt,
+		s.period_start,
+		s.period_end, s.average_daily_sales
+--case when year(endDate)!=yr datediff(day,s.period_start,s.period_end) 
+from sales_1 s
+join (
+	select product_id, y1 as yr from cte
+	union
+	select product_id, y2 as yr from cte
+	union 
+	select product_id, y3 as yr from cte) b
+	on s.product_id =b.product_id)c
+)d
+) e on 
+p.product_id =e.product_id
+
+
+
+
+
