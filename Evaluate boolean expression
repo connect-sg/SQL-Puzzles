@@ -1,0 +1,79 @@
+Write an SQL query to evaluate the boolean expressions in Expressions table.
+
+Return the result table in any order.
+
+The query result format is in the following example.
+
+Variables table:
++------+-------+
+| name | value |
++------+-------+
+| x    | 66    |
+| y    | 77    |
++------+-------+
+
+Expressions table:
++--------------+----------+---------------+
+| left_operand | operator | right_operand |
++--------------+----------+---------------+
+| x            | >        | y             |
+| x            | <        | y             |
+| x            | =        | y             |
+| y            | >        | x             |
+| y            | <        | x             |
+| x            | =        | x             |
++--------------+----------+---------------+
+
+Result table:
++--------------+----------+---------------+-------+
+| left_operand | operator | right_operand | value |
++--------------+----------+---------------+-------+
+| x            | >        | y             | false |
+| x            | <        | y             | true  |
+| x            | =        | y             | false |
+| y            | >        | x             | true  |
+| y            | <        | x             | false |
+| x            | =        | x             | true  |
++--------------+----------+---------------+-------+
+As shown, you need find the value of each boolean exprssion in the table using the variables table.
+
+
+Query:
+--create table expressions(left_operand varchar(50), operator varchar(50), right_operand varchar(50))
+--insert into expressions
+--values
+--('x','>','y'),
+--('x','<','y'),
+--('x','=','y'),
+--('y','>','x'),
+--('y','<','x'),
+--('x','=','x')
+
+--create table variables (name varchar(50), value varchar(50))
+--insert into variables
+--values
+--( 'x'    , 66)    ,
+--( 'y'    , 77)  
+
+
+
+select a.left_operand, 
+a.operator, 
+a.right_operand, 
+case when a.operator ='>' then 
+              case when a.left_operand>a.right_operand then 'true'
+              else 'false' end
+            when a.operator ='<' then 
+               case when a.left_operand< a.right_operand then 'true'
+               else 'false' end
+            when a.operator='=' then 
+                case when a.left_operand=a.right_operand then 'true'
+                else 'false' end
+            else 'false' end as value    
+from (
+select case when left_operand ='x' then (select value from variables where name ='x')
+                                   else (select value from variables where name ='y') end as left_operand,   
+       case when right_operand ='x' then (select value from variables where name ='x')
+                                   else (select value from variables where name ='y') end as right_operand,
+       operator
+from expressions ) a                                                         
