@@ -1,0 +1,81 @@
+Orders
++----------+------------+-------------+------------+
+| order_id | order_date | customer_id | product_id |
++----------+------------+-------------+------------+
+| 1        | 2020-07-31 | 1           | 1          |
+| 2        | 2020-07-30 | 2           | 2          |
+| 3        | 2020-08-29 | 3           | 3          |
+| 4        | 2020-07-29 | 4           | 1          |
+| 5        | 2020-06-10 | 1           | 2          |
+| 6        | 2020-08-01 | 2           | 1          |
+| 7        | 2020-08-01 | 3           | 1          |
+| 8        | 2020-08-03 | 1           | 2          |
+| 9        | 2020-08-07 | 2           | 3          |
+| 10       | 2020-07-15 | 1           | 2          |
++----------+------------+-------------+------------+
+
+Products
++------------+--------------+-------+
+| product_id | product_name | price |
++------------+--------------+-------+
+| 1          | keyboard     | 120   |
+| 2          | mouse        | 80    |
+| 3          | screen       | 600   |
+| 4          | hard disk    | 450   |
++------------+--------------+-------+
+
+Result table:
++--------------+------------+----------+------------+
+| product_name | product_id | order_id | order_date |
++--------------+------------+----------+------------+
+| keyboard     | 1          | 6        | 2020-08-01 |
+| keyboard     | 1          | 7        | 2020-08-01 |
+| mouse        | 2          | 8        | 2020-08-03 |
+| screen       | 3          | 3        | 2020-08-29 |
++--------------+------------+----------+------------+
+keyboard's most recent order is in 2020-08-01, it was ordered two times this day.
+mouse's most recent order is in 2020-08-03, it was ordered only once this day.
+screen's most recent order is in 2020-08-29, it was ordered only once this day.
+The hard disk was never ordered and we don't include it in the result table.
+
+
+
+Query:
+--drop table orders
+--create table orders(order_id int, order_date date, customer_id int, product_id int)
+--insert into orders 
+--values
+--(1,'2020-07-31',1,1),
+--(2,'2020-07-30',2,2),
+--(3,'2020-08-29',3,3),
+--(4,'2020-07-29',4,1),
+--(5,'2020-06-10',1,2),
+--(6,'2020-08-01',2,1),
+--(7,'2020-08-01',3,1),
+--(8,'2020-08-03',1,2),
+--(9,'2020-08-07',2,3),
+--(10,'2020-07-15',1,2)
+
+
+--drop table products
+--create table products(product_id int,product_name varchar(50), price int)
+--insert into products
+--values
+--(1,'keyboard',120),
+--(2,'mouse',80),
+--(3,'screen',600),
+--(4,'harddisk',450)
+
+
+select a.product_name, a.product_id,o.order_id, a.order_date
+from orders o
+join(
+select p.product_name, p.product_id, max(o.order_date) as order_date
+from products p 
+join orders o
+on p.product_id=o.product_id
+group by p.product_name, p.product_id) a
+on o.product_id=a.product_id
+and o.order_date=a.order_date
+order by a.order_date
+
