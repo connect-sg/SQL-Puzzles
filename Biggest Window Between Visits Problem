@@ -1,0 +1,107 @@
+Write an SQL query that will, for each user_id, find out the largest window of days between each visit and the one right after it (or today if you are considering the last visit).
+
+Return the result table ordered by user_id.
+
+The query result format is in the following example:
+
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+UserVisits table:
++---------+------------+
+| user_id | visit_date |
++---------+------------+
+| 1       | 2020-11-28 |
+| 1       | 2020-10-20 |
+| 1       | 2020-12-3  |
+| 2       | 2020-10-5  |
+| 2       | 2020-12-9  |
+| 3       | 2020-11-11 |
++---------+------------+
+Result table:
++---------+---------------+
+| user_id | biggest_window|
++---------+---------------+
+| 1       | 39            |
+| 2       | 65            |
+| 3       | 51            |
++---------+---------------+
+For the first user, the windows in question are between dates:
+    - 2020-10-20 and 2020-11-28 with a total of 39 days. 
+    - 2020-11-28 and 2020-12-3 with a total of 5 days. 
+    - 2020-12-3 and 2021-1-1 with a total of 29 days.
+Making the biggest window the one with 39 days.
+For the second user, the windows in question are between dates:
+    - 2020-10-5 and 2020-12-9 with a total of 65 days.
+    - 2020-12-9 and 2021-1-1 with a total of 23 days.
+Making the biggest window the one with 65 days.
+For the third user, the only window in question is between dates 2020-11-11 and 2021-1-1 with a total of 51 days.
+
+ 
+
+Query:
+
+--create table uservisits(user_id int, visit_date date)
+--insert into uservisits
+--values
+--(1,'2020-11-28'),
+--(1,'2020-10-20'),
+--(1,'2020-12-3'),
+--(2,'2020-10-5'),
+--(2,'2020-12-9'),
+--(3,'2020-11-11')
+
+
+
+with visit_1 as (
+	select  u.user_id,
+	        u.visit_date, 
+	        count(u1.visit_date) as cnt
+	from uservisits u join uservisits u1
+			on u.visit_date>=u1.visit_date 
+			and u.user_id=u1.user_id
+	group by u.user_id,u.visit_date
+) 
+
+--select * from visit_1;
+select c.user_Id, max(c.daysdiff)
+from(
+select 
+		b.user_id,
+		coalesce(max(datediff(day, b.visit_date,a.visit_date)),datediff(day,b.visit_date,'2021-01-01')) as daysdiff
+from visit_1 a 
+		right join visit_1 b 
+		on a.cnt=b.cnt+1 
+		and a.user_id=b.user_id
+group by b.user_id,b.visit_date)c
+group by c.user_id
+
+
+
+
