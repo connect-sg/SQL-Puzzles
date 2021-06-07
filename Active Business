@@ -44,3 +44,26 @@ from events e where e.occurences>(Select avg(occurences) from events
                              )
 group by business_id
 having count(distinct e.event_type)>=2
+
+
+OR 
+
+
+with avg_table as (
+     select avg(occurences) as avg_acc,
+           event_type 
+     from events
+     group by event_type
+)
+
+
+
+select b.business_id from (
+                       select e.business_id,  
+                              e.event_type, 
+                              e.occurences 
+                       from events e
+                       join avg_table a on e.event_type=a.event_type 
+                                           and e.occurences>a.avg_acc
+) b
+group by b.business_id having count(b.event_type)>1
