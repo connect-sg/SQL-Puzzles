@@ -51,6 +51,31 @@ Query:
 --( 2          , 3          , 2          , 500      , '2020-08-02'   ) ,
 --( 3          , 2          , 1          , 200      , '2020-08-03'   ) 
 
+SELECT A.USER_ID,
+       A.USER_NAME,
+       (A.PAID_BY + B.PAID_TO+A.CREDIT) AS CREDIT,
+       CASE WHEN (A.PAID_BY+B.PAID_TO+A.CREDIT)>1 THEN 'NO'
+            ELSE 'YES' END AS CREDIT_LIMIT_BREACHED
+
+        FROM 
+ (           
+SELECT U.USER_ID,
+       U.USER_NAME,
+	   U.CREDIT,
+       COALESCE(-1*T.AMOUNT,0) AS PAID_BY
+       
+FROM USERS U LEFT JOIN TRANSACTIONS T ON U.USER_ID = T.PAID_BY 
+) A JOIN (
+SELECT U.USER_ID,
+       U.USER_NAME,
+	   U.CREDIT,
+       COALESCE(T.AMOUNT,0) AS PAID_TO
+       
+FROM USERS U LEFT JOIN TRANSACTIONS T ON U.USER_ID = T.PAID_TO 
+) B ON A.USER_ID= B.USER_ID
+
+or
+
 select u.user_id,u.user_name, coalesce(u.credit+a.credit,u.credit) as credit,
 case when u.credit>a.credit then 'No' else 'Yes' end as credit_limit_breached
 from users u left join (
