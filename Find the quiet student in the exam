@@ -88,3 +88,14 @@ select exam_id, min(score) as score
 from exam 
 group by exam_Id) b
  on e.exam_id=b.exam_id and e.score=b.score) and student_id in (select student_id from exam)
+ 
+ 
+ OR 
+ 
+ select distinct s.student_id, s.student_name
+from student s 
+join exam e  on s.student_id = e.student_id
+where e.student_id not in (select distinct e.student_id from exam e
+                                                 where score in (select max(score) from exam where exam_id =e.exam_id) or score in (select min(score) from exam where exam_id =e.exam_id))
+
+
