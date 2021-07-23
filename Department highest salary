@@ -29,7 +29,14 @@ Write a SQL query to find employees who have the highest salary in each of the d
 
 
 Query:
-
+SELECT D.NAME,
+               E.NAME,
+               E.SALARY
+FROM EMPLOYEE_1 E JOIN DEPARTMENT D
+                                     ON E.DEPARTMENTID =D.ID
+               WHERE E.SALARY IN (SELECT MAX(SALARY) FROM EMPLOYEE_1 WHERE DEPARTMENTID = E.DEPARTMENTID)
+	       
+	       OR
 select d.name, e.name,e.salary from department d join employee e on e.departmentid=d.id 
                                where 1=(select count(salary) from employee 
 							                                 where salary>=e.salary and departmentid=e.departmentid
