@@ -34,15 +34,17 @@ The average salary of department ‘2’ is (6000 + 10000)/2 = 8000, which is th
 With the same formula for the average salary comparison in February, the result is ‘same’ since both the department ‘1’ and ‘2’ have the same average salary with the company, which is 7000.
 
 
-Query:Not correct
-select 
-	   concat(DATEPART(year,k.pay_date), '-' ,datepart(month,k.pay_date)) as pay_month,
-	   k.department_id,
-	  
-	   
-	   case  
-                                                                                                            when k.dept_avg>k.cmpy_avg then 'lower' 
-																											when  k.dept_avg<k.cmpy_avg then 'higher' 
-																											else 'same' end as comparison from 
-(select s.pay_date,e.department_id, AVG(s.amount) as dept_avg,(select avg(amount) from salary) as cmpy_avg from salary s join employee e 
-                                                   on s.employee_id=e.employee_id group by e.Department_Id,s.pay_date) k 
+Query:
+
+SELECT CONCAT(YEAR(PAY_DATE),'-', MONTH(PAY_DATE)) AS PAY_MONTH,
+       A.DEPARTMENT_ID,
+       CASE WHEN A.AVG_DEPT_AMT>(SELECT AVG(AMOUNT) FROM SALARY WHERE PAY_DATE = A.PAY_DATE) THEN 'HIGHER'
+            WHEN A.AVG_DEPT_AMT<(SELECT AVG(AMOUNT) FROM SALARY WHERE PAY_DATE = A.PAY_DATE) THEN 'LOWER' 
+			ELSE 'SAME' END AS COMPARISON
+FROM             
+     (SELECT 
+              AVG(S.AMOUNT) AS AVG_DEPT_AMT,
+              S.PAY_DATE,
+              E.DEPARTMENT_ID FROM SALARY S JOIN EMPY E 
+                                             ON S.EMPLOYEE_ID = E.EMPY_ID
+              GROUP BY E.DEPARTMENT_ID,S.PAY_DATE ) A 
