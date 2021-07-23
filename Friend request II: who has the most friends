@@ -25,6 +25,16 @@ In the real world, multiple people could have the same most number of friends, c
 
 
 Query: 
+select top 1 b.id from (
+select a.id, count(a.id) as cnt from (
+select requester_id as id  from request_accepted
+union all 
+select accepter_id as id from request_accepted) a
+group by a.id) b
+order by b.cnt desc
+
+OR
+
 select  top 1 d.requester_id,d.cnt from (
 select *,a.rc+b.ac as cnt from
 (select requester_id,count(requester_id) as rc from request_accepted group by requester_id) a full join 
