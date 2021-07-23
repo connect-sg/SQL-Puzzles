@@ -59,3 +59,13 @@ select e1.employee_id from employees e
 		 on e.manager_id =1 
 		 and e.employee_id = e1.manager_id )
 and employee_id!=1
+
+
+OR 
+
+
+select  e4.employee_id from employees e  left join employees e1  on e1.manager_id=e.employee_id  and e.manager_id =1
+                                          left join employees e2 on  e2.manager_id=e1.employee_id    
+										left join employees e3  on  e3.manager_id=e2.employee_id 
+										left join employees e4 on e4.manager_id =e3.employee_id   
+										where e1.employee_id=1 and e4.employee_id is not null and e4.employee_id !=1     
