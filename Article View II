@@ -46,3 +46,10 @@ from views
 group by view_date,viewer_id,article_id) a
 group by viewer_id
 having count(a.viewer_id)>1
+
+OR 
+SELECT a.VIEWER_ID FROM (
+	SELECT VIEWER_ID,VIEW_DATE FROM VIEWS 
+	                 GROUP BY VIEWER_ID,VIEW_DATE HAVING COUNT(DISTINCT ARTICLE_ID)>1) a
+
+
