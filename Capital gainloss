@@ -49,6 +49,16 @@ Query:
 --('Handbags','Sell',29,7000),
 --('CoronaMasks','Sell',10,10000)
 
+SELECT A.STOCK_NAME,
+       SUM(A.PRICE)
+FROM(       
+SELECT STOCK_NAME,
+       CASE WHEN OPERATION = 'BUY' THEN -1*PRICE 
+            ELSE PRICE END AS PRICE
+FROM STOCKS) A
+GROUP BY A.STOCK_NAME             
+
+OR
 
 with stk as (
 select stock_name, operation,sum(price) as price
