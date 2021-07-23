@@ -21,6 +21,15 @@ Note;
 If there is no such number, just output null.
 
 Query:
+select MAX(a.NUM) FROM (
+SELECT NUM  
+FROM NUMBER 
+GROUP BY NUM
+HAVING COUNT(NUM)=1 ) a
+
+
+OR
+
 select max(a.num) from (
                       select num, count(num) as cnt from number 
 					  group by num) a
