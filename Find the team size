@@ -42,6 +42,21 @@ Query:
 --(5,9),
 --(6,9)
 
+Select a.employee_id,
+            b.team_members 
+From employeelc a join (
+                                     Select e.team_id, 
+                                                count(e.employee_id) as team_members
+                                     From employeelc e 
+                                                  where e.team_id in   (select  team_id 
+                                                                                     from employeelc  
+                                                                                         where employee_id =e.employee_id)
+                                           group by e.team_id
+                                     ) b 
+On a.team_id = b.team_id
+
+
+OR
 
 select e.employee_id, a.cnt
 from  employeelc e join 
