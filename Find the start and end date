@@ -43,7 +43,18 @@ Query:
 --( 8 )         ,
 --( 10)  
 
+select min(a.log_id) as start_no,max(a.log_id) as end_no from 
+(
+select l1.log_id,
+       count(l2.log_id) as cnt,
+       (l1.log_id -count(l2.log_id)) as diff
+from logs l1 join logs l2 on l1.log_id>=l2.log_id
+group by l1.log_id
+) a
+group by a.diff
 
+
+OR
 
 with cte as (
 	select l1.log_id,count(l2.log_id) as rownum
