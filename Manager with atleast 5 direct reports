@@ -23,4 +23,10 @@ Note:
 No one would report to himself.
 
 Query:
-select  managerid from employee group by managerid having count(managerid)= 5; 
+select name from employee3 where id in (
+select managerid
+from employee3 
+group by  managerId 
+having count(*)>=5
+)
+
