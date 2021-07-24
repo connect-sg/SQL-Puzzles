@@ -99,6 +99,19 @@ Query:
 --| 99         | Bob           | 300   | 2            | 0                    |
 --+------------+---------------+-------+--------------+----------------------+
  
+ select i.invoice_id, 
+       c.customer_name,
+       i.price,
+       (select count(contact_name) from contacts where user_id = i.user_id) as contacts_counts,
+       (select count(customer_name) from customers_1 where customer_name in (select contact_name from contacts where user_id = i.user_id ) ) as tursted_contacts_cnt
+from invoices i join customers_1 c on i.user_id =c.customer_id  
+group by i.user_id,i.invoice_id, 
+       c.customer_name,
+       i.price
+	   order by i.invoice_id
+
+
+OR
 
 select i.invoice_id, 
 c.customer_name, 
