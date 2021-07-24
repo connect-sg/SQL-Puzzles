@@ -53,6 +53,16 @@
 --the number of users that logged in for the first time on that date. Assume today is 2019-06-30.
 
 Query:
+
+Select t.activity_date,count(*)
+From traffic t where 
+t.activity_date  between dateadd(day,-90,'2019-06-30') and '2019-06-30' and
+t.activity_date in (select min(activity_date) from traffic where activity ='login' and user_id =t.user_id)
+And activity = 'login' 
+Group by t.activity_date
+
+OR
+
 select min(t.activity_date), 
        count(distinct t.user_id)
 from traffic t
