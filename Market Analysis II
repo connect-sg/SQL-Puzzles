@@ -72,7 +72,21 @@ Query:
 --(2,'Lenovo'),
 --(3,'LG'),
 --(4,'HP')
-
+select u.user_id,
+       case when a.item_id =i.item_id then 'yes' 
+	        else 'No' end as '2nd_fav_brand_sell'  
+from(
+     select seller_id, 
+	 item_id 
+	 from ordersss o 
+               where o.order_date in (select max(order_date) 
+			                          from ordersss where order_date!=(select max(order_date) from ordersss) 
+									                       and seller_id = o.seller_id)
+) a right join userss u on a.seller_id = u.user_id 
+     right join  itemss i on u.favorite_brand = i.item_brand
+	 order by u.user_id
+        
+ OR       
 
 select a.user_id, 
        case when b.item_id is null then 'no'
