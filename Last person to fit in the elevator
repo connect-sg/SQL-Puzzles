@@ -1,4 +1,5 @@
-Write an SQL query to find the person_name of the last person who will fit in the elevator without exceeding the weight limit. It is guaranteed that the person who is first in the queue can fit in the elevator.
+Write an SQL query to find the person_name of the last person who will fit in the elevator without exceeding the weight limit. It is guaranteed that the person who is 
+first in the queue can fit in the elevator.
 
 The query result format is in the following example:
 
