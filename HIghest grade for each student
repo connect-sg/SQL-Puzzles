@@ -41,7 +41,21 @@ Query:
 --(3,2,75),
 --(3,3,82)
 
-
+select * from enrollment;
+Select f.student_id, min(f.course_id),f.grade from enrollment f 
+join 
+ (
+Select e.student_id,max(e.grade) as grade from enrollment e
+Group by e.student_id
+) c
+on f.student_id = c.student_id
+    And f.grade = c.grade
+	group by f.student_id,f.grade
+	
+	
+	OR
+	
+	
 select  s.student_id, 
 		min(s.course_id), 
 		s.grade
