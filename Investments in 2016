@@ -36,3 +36,15 @@ So, the result is the sum of TIV_2016 of the first and last record, which is 45.
 
 
 Query:
+
+
+Select sum(distinct i.tiv_2016)
+from insurance i 
+join insurance i1 on i.tiv_2015 =i1.tiv_2015 
+                            and i.pid! = i1.pid
+                            and (i.lat!=i1.lat and i.lon!=i1.lon)
+							 and i.pid not in (select i2.pid 
+							                   from insurance i2 join insurance i3 
+											                     on i2.pid!=i3.pid 
+																 and (i2.lat = i3.lat and i2.lon =i3.lon))
+
