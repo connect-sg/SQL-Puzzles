@@ -26,6 +26,21 @@ Note: The highest answer rate meaning is: answer number’s ratio in show number
 
 Query:
 
+select c.username, c.activity, c.startdate, c.enddate from useractivity c join (
+select b.username,min(b.startdate) as startdate
+from (
+select a.username, 
+       a.activity,
+       a.startdate,
+       a.endDate
+from useractivity a
+where 2 >= (select count(activity) from useractivity 
+                                  where startDate>=a.startDate and username = a.username) )b
+								  group by b.username) d
+								  on c.username=d.username and c.startdate=d.startdate
+          
+          OR
+
 select b.question_id from 
 (select question_id,count(*) as anscnt from survey_log where action ='answer' group by question_id) a
  join 
