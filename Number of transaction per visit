@@ -111,3 +111,18 @@ select count(*) from transactions_1 group by transaction_date
 --insert into tranx values(0),(1),(2),(3),(4)
 
 --delete from tranx where number =4
+
+
+
+OR
+
+
+select a.trans, sum(a.visited) as visited from (
+Select count(v.user_id) as visited,count(t.user_id) as trans 
+from visits v 
+                                         full join transactions_1 t 
+                                         On v.user_id = t.user_id 
+										 and v.visit_date= t.transaction_date 
+										 group by t.transaction_date
+										 ) a 
+										 group by a.trans
