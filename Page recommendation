@@ -87,4 +87,13 @@ user_id!=1 and user_id in (select case when user2_id!=1 then  user2_id
 and page_id not in (select page_id 
                            from likes 
 						   where user_id=1)
+						 
+				OR
+				
+select distinct l.page_id from likes l join (
+
+select user1_id as uid from friendship where user2_id =1 
+union  
+select user2_id as uid from friendship where user1_id =1) f on l.user_id =f.uid and l.page_id not in (select page_id from likes where user_id=1)				
+						   
 
