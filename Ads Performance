@@ -56,7 +56,13 @@ Query:
 --( 1     , 4       , 'Viewed ' ),
 --( 2     , 11      , 'Viewed ' ),
 --( 1     , 2       , 'Clicked' )
-
+select s_id,(convert(decimal(6,2),coalesce(sum(case when action = 'Clicked' then 1 end),0))/
+       convert(decimal(4,2),coalesce(sum(case when action = 'Clicked' or action = 'Viewed' then 1 end),0)))* 100
+	   from ads 
+	   group by s_id;
+	   
+	   OR 
+	   
 select b.s_id,
          case when b.clicks=0 then 0 
             else convert(decimal(3,2),b.clicks)/(convert(decimal(5,2),b.clicks) +convert(decimal(5,2),b.viewed))*100 end as ctr
