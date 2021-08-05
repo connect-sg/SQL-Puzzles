@@ -37,6 +37,19 @@ Query:
 --(1,'pageviews',3),
 --(2,'pageviews',12)
 
+select business_id from (
+                        select event_type,
+						avg(occurences) as ocr_business 
+						from events a
+                        group by a.event_type
+						) a 
+                   join events b 
+				   on a.event_type = b.event_type 
+				      and a.ocr_business<b.occurences
+group by business_id 
+having count(business_id)>1
+
+OR
 
 select e.business_id
 from events e where e.occurences>(Select avg(occurences) from events 
