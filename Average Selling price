@@ -83,6 +83,13 @@ Query:
 --(2,'2019-02-10',200),
 --(2,'2019-03-22',30)
 
+select p.product_id,convert(decimal(6,2),sum(p.price*u.units))/convert(decimal(6,2),sum(u.units)) 
+ from prices p join unitssold u on p.product_id = u.product_id and u.purchase_date between p.start_date and p.end_date
+ group by p.product_id;
+ 
+ 
+ OR
+
 
 select 
 p.product_id,
