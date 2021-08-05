@@ -39,6 +39,11 @@ Query:
 --(3,4,4,'2019-07-21'),
 --(3,4,4,'2019-07-21')
 
+select viewer_id as id from views where author_id!=viewer_id
+                       group by view_date, viewer_id having count(view_date)>1 
+		       
+		       OR
+
 select * from views;
 select a.viewer_id from (
 select distinct article_id, viewer_id,view_date 
