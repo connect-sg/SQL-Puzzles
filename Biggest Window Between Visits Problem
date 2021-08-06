@@ -77,7 +77,13 @@ Query:
 --(2,'2020-12-9'),
 --(3,'2020-11-11')
 
+select a.user_id,max(a.diff) from (
+select user_id, 
+abs(datediff(day, case when user_id = 3 then coalesce(lag(visit_date) over(partition by user_id order by visit_date),'2021-1-1') else lag(visit_date) over(partition by user_id order by visit_date) end ,visit_date)) as diff 
+from uservisits) a group by a.user_id; 
 
+
+OR
 
 with visit_1 as (
 	select  u.user_id,
