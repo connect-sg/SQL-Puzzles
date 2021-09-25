@@ -80,3 +80,17 @@ select b.business_id from (
                                            and e.occurences>a.avg_acc
 ) b
 group by b.business_id having count(b.event_type)>1
+
+
+
+
+
+OR 
+
+
+
+
+
+SELECT e.business_id from events e
+where e.occurences>(select avg(occurences) from events where event_type=e.event_type )
+group by e.business_id having count(e.event_type)>1
