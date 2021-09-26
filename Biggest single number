@@ -33,4 +33,8 @@ OR
 select max(a.num) from (
                       select num, count(num) as cnt from number 
 					  group by num) a
+					  
+OR 
+
+select top 1 num from number group by num having count(num)<2 order by num desc 
                   where cnt=1;
