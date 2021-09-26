@@ -57,4 +57,12 @@ SELECT a.VIEWER_ID FROM (
 	SELECT VIEWER_ID,VIEW_DATE FROM VIEWS 
 	                 GROUP BY VIEWER_ID,VIEW_DATE HAVING COUNT(DISTINCT ARTICLE_ID)>1) a
 
+OR 
+
+select viewer_id from views 
+                 group by view_date, viewer_id 
+				 having count(distinct article_id)>1
+			 
+			 
+
 
