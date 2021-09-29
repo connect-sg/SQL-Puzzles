@@ -37,3 +37,13 @@ select d.id,
 		---
 		----
 from department1 d
+
+
+
+OR 
+
+select  id, sum(case when mon_name ='Jan' then revenue else null end) as Jan_revenue,
+           sum(case when mon_name ='Feb' then revenue else null end) as feb_revenue,
+		   sum(case when mon_name ='Mar' then revenue else null end) as mar_revenue,
+           sum(case when mon_name ='Apr' then revenue else null end) as apr_revenue,
+		   sum(case when mon_name ='May' then revenue else null end) as may_revenue from department1 group by id
