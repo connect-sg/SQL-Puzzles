@@ -31,3 +31,13 @@ where (player_id, event_date) in (
     select player_id, min(event_date)
     from Activity
     group by player_id)
+    
+    
+    OR 
+    
+    select distinct player_id, first_value(device_id) over(partition by player_id order by event_date) from activity2 
+    
+    
+    OR 
+    
+select distinct player_id, first_value(device_id) over(partition by player_id order by event_date) from activity2     
