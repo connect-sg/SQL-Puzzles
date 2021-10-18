@@ -38,3 +38,10 @@ select a.event_date as install_dt,
        convert(decimal(3,2),count(a.player_id)) as installs
 from activity2 a 
 group by a.event_date) b
+
+
+OR 
+
+select a.event_date, 
+count(a.player_id),coalesce((select count(player_id) from activity2 where event_date=dateadd(day, 1,a.event_date) and  player_id in (select player_id from activity2 where event_date = a.event_date)),1)*1.0/count(a.player_id) from activity2 a 
+group by a.event_date 
