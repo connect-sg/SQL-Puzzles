@@ -80,3 +80,11 @@ on p.player_id=m.first_player
  from tab t where t.first_score =(select max(first_score) from tab 
                                where group_id=t.group_id )
 order by t.group_id
+
+
+OR 
+
+select distinct a.group_id, first_value(a.player_id) over(partition by a.group_id order by scores desc,player_id)  from(
+select p.group_id, p.player_id,
+case when p.player_id = m.first_player then sum(m.first_score) else sum(m.second_score) end as scores from players p join matches m 
+on p.player_id = m.first_player or p.player_Id =m.second_layer group by p.group_id,p.player_id,m.first_player) a 
