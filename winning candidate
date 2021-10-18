@@ -40,3 +40,11 @@ from candidate
                group by candidateid
                order by count(candidateid) desc
                limit 1)
+               
+               
+OR 
+
+select name from candidate where id in (
+select a.candidateid from (
+select top 1 candidateid, count(candidateid) as cnt from  vote 
+group by  candidateid order by count(candidateid) desc) a);
