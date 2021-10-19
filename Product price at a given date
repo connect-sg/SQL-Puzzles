@@ -52,3 +52,10 @@ select * from query
 union
 select product_id,new_price,change_date from products 
 where product_id not in (select product_id from query)) p
+
+
+OR
+
+select distinct p2.product_id, 
+       coalesce(first_value(p1.new_price) over(partition by p1.product_id order by p1.change_date desc),10) as price
+from productss p1 right join productss p2 on p1.product_id = p2.product_id and  p1.change_date <='2019-08-16'
