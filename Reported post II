@@ -114,3 +114,21 @@ select  convert(decimal(3,2),count(distinct t2.post_id)) as datecnt, t1.action_d
         convert(decimal(3,2),(select count(post_id) from removal)) as cnt from tab t1 join tab t2 
               on t1.action_date>t2.action_date 
 			  group by t1.action_date) c) d
+			  
+			  
+			  OR 
+			  
+			  select * from actions;
+select * from removal;
+
+with cte as 
+(
+select distinct a.action_date, a.post_id, a.extra,r.post_id as pidr, r.removal_date
+from actions a join removal r on r.removal_date>a.action_date
+where a.extra = 'spam'
+)
+select avg(c.pert) from (
+select action_date, post_id, case when post_id in (select pidr from cte where action_date =a.action_date) then 100.0 
+       else count(distinct post_id)*100/count(pidr) end as pert
+from cte a group by action_date,post_id)c
+			  
