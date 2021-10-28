@@ -98,4 +98,17 @@ join exam e  on s.student_id = e.student_id
 where e.student_id not in (select distinct e.student_id from exam e
                                                  where score in (select max(score) from exam where exam_id =e.exam_id) or score in (select min(score) from exam where exam_id =e.exam_id))
 
+OR 
 
+
+with cte as 
+(
+select exam_id, student_id, lead(score) over(partition by exam_id order by score) as s1, 
+lag(score) over(partition by exam_id order by score) as s2 from exam) 
+
+
+
+select distinct student_id from cte  
+       where s1 is not null and 
+	         s2 is not null and 
+			 student_id not in (select student_id from cte where s1 is null or s2 is null)
