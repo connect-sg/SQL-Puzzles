@@ -112,3 +112,17 @@ SELECT C.NAME,MAX(CL.DURATION) AS DUR FROM COUNTRY C JOIN PERSON P
                                 JOIN CALLS CL ON P.ID = CL.FROM_ID OR P.ID = CL.TO_ID 
 GROUP BY C.NAME ) X
 ORDER BY X.DUR DESC
+
+or 
+
+select top 1 b.name from (
+select c.name, sum(duration) as dur from
+(
+select from_id as id, duration from calls
+union all
+select to_id as id, duration from calls ) a join 
+person p on p.id = a.id 
+join 
+country c on c.country_code=SUBSTRING(p.phone_number,0,4)
+
+group by c.name) b order  by b.dur desc
