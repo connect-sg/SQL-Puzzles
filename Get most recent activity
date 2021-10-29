@@ -40,6 +40,20 @@ Query:
 --('Alice','Travel','2020-02-24','2020-02-28'),
 --('Bob','Travel','2020-02-11','2020-02-18')
 
+
+with cte as (
+select u1.username, u1.activity, u1.startdate, u1.enddate from useractivity u1 
+where 2=(select count(startdate) from useractivity where username = u1.username and startdate>=u1.startdate)
+)
+
+select * from useractivity where username not in (select username from cte) 
+union 
+select * from cte
+
+
+OR 
+
+
 select u.username, 
        u.activity,  
 	   u.startDate, 
