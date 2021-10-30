@@ -65,3 +65,14 @@ where grade in (select max(grade)
 				where student_id=s.student_id) 
 group by s.student_id,s.grade
 order by s.grade des
+
+
+OR 
+
+
+with cte as (
+select distinct student_id, max(grade) over(partition by student_id order by grade desc) as grade from enrollment )
+
+select a.student_id, min(a.course_id), a.grade from enrollment a join cte c on a.student_id =c.student_id and a.grade = c.grade
+group by a.student_id, a.grade
+order by a.student_id
