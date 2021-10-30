@@ -44,3 +44,11 @@ where d.order_date=d.customer_pref_delivery_date
 and d.order_date =(select min(order_date)
                   from delivery
                   where customer_id =d.customer_id)
+
+
+OR
+
+
+select sum(case when a.order_date = d.customer_pref_delivery_date then 1 end)*100.0/count(distinct d.customer_id) from delivery d join 
+(select distinct customer_id, min(order_date) over(partition by customer_id) as order_date from delivery) a 
+on d.customer_id = a.customer_id and a.order_date =d.order_date
