@@ -43,3 +43,8 @@ query:
 select convert(decimal(3,2),(convert(decimal(3,2),count(*))/convert(decimal(3,2),(select count(*) from delivery))))* 100 as cnt
 from delivery 
 where order_date=customer_pref_delivery_date
+
+
+OR
+
+select sum(case when order_date = customer_pref_delivery_date then 1 end)*100.0,count(*) from delivery
