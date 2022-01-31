@@ -120,5 +120,15 @@ group by b.user_id,b.visit_date)c
 group by c.user_id
 
 
+OR 
 
+select distinct  a.user_id,
+       max(a.com) over(partition by a.user_id) as compare 
+from (
+   select user_id, 
+        visit_date,
+        coalesce(datediff(day,visit_date,lead(visit_date) over(partition by user_id order by visit_date)),
+           datediff(day,visit_date,'2021-01-01')) as com
+
+from uservisits) a
 
