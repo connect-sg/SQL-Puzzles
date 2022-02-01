@@ -69,3 +69,10 @@ select s.stock_name, s.price-b.price as capital_gain_loss
 from (select stock_name, price from stk where operation='Sell') s 
 join (select stock_name, price from stk where operation='Buy') b 
 on s.stock_name =b.stock_name
+
+
+OR 
+
+
+select stock_name, sum(case when operation='Buy' then -1*price else price end) as capital_gain_loss 
+from stocks group by stock_name;
