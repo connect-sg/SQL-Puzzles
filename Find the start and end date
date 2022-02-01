@@ -43,6 +43,12 @@ Query:
 --( 8 )         ,
 --( 10)  
 
+
+select distinct min(a.log_id) over(partition by a.diff) as start, max(a.log_id) over(partition by a.diff) as endp from(
+select log_id,log_id-row_number()over(order by log_id) as diff from logs) a;
+
+OR
+
 select min(a.log_id) as start_no,max(a.log_id) as end_no from 
 (
 select l1.log_id,
