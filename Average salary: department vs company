@@ -48,3 +48,17 @@ FROM
               E.DEPARTMENT_ID FROM SALARY S JOIN EMPY E 
                                              ON S.EMPLOYEE_ID = E.EMPY_ID
               GROUP BY E.DEPARTMENT_ID,S.PAY_DATE ) A 
+
+
+OR 
+
+
+with cte as 
+   select avg(salary) as a from salary
+
+ select concat(year(s.pay_date),'-',month(s.pay_date)) as pay_month,
+d.department_id,
+case when avg(salary)> cte.a
+from salary s join department d on 
+d.employee_id =s.employee_id join cte on 1=1
+group by oncat(year(s.pay_date),'-',month(s.pay_date)), d.department_id
