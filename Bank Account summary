@@ -89,3 +89,15 @@ left join transactions t2
 on u.user_id=t2.paid_by
 group by u.user_id,u.user_name) a
 on u.user_id=a.user_id
+
+
+or 
+select a.user_id, a.user_name,a.credit+coalesce(sum(a.amt),0) as credit, case when a.credit+coalesce(sum(a.amt),0)> 0 then 'No' else 'Yes' end as credit_limit_breached  from (
+select u.user_id, u.user_name, u.credit, t.amount as amt 
+from users u full join transactions t 
+on u.user_id= t.paid_to 
+union 
+select u.user_id, u.user_name, u.credit, -1*t.amount as amt 
+from users u full join transactions t 
+on u.user_id= t.paid_by ) a 
+group by a.user_id, a.user_name,a.credit
