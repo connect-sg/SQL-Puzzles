@@ -57,5 +57,15 @@ FROM
                          when (select avg(amount) from salary s1 join empy d1 on s1.employee_id=d1.empy_id where s1.pay_date=s.pay_date and d1.department_id =d.department_id)< (select avg(amount) from salary where pay_date =s.pay_date) then 'lower'
 						 else 'same' end as comparison
 						 from salary s join empy d on s.employee_id=d.empy_id
+						 
+	OR
+	
+	
+	select concat(year(a.pay_date),'-0',month(a.pay_date)) as pay_month, case when a.amt1<b.amt2 then 'higher' when a.amt1>b.amt2 then 'lower' else 'same' end as comp from (
+select distinct s.pay_date,avg(s.amount) amt1 from salary s group by s.pay_date) a join (
+select s.pay_date, d.department_id, avg(s.amount) amt2 from salary s join empy d on s.employee_id=d.empy_id group by s.pay_date,d.department_id) b 
+on a.pay_date=b.pay_date
+order by pay_month desc
+						 
 
 
