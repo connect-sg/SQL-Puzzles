@@ -48,5 +48,14 @@ FROM
               E.DEPARTMENT_ID FROM SALARY S JOIN EMPY E 
                                              ON S.EMPLOYEE_ID = E.EMPY_ID
               GROUP BY E.DEPARTMENT_ID,S.PAY_DATE ) A 
+	      
+	      
+	      OR 
+	      
+	      
+	      select distinct pay_date, d.department_id, case  when (select avg(amount) from salary s1 join empy d1 on s1.employee_id=d1.empy_id where s1.pay_date=s.pay_date and d1.department_id =d.department_id)> (select avg(amount) from salary where pay_date =s.pay_date) then 'higher'
+                         when (select avg(amount) from salary s1 join empy d1 on s1.employee_id=d1.empy_id where s1.pay_date=s.pay_date and d1.department_id =d.department_id)< (select avg(amount) from salary where pay_date =s.pay_date) then 'lower'
+						 else 'same' end as comparison
+						 from salary s join empy d on s.employee_id=d.empy_id
 
 
