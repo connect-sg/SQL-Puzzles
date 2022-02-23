@@ -79,3 +79,9 @@ select b.start_id,
 from cte l1 left join cte l2 
 on l1.rownum=l2.rownum+1) a
 group by a.end_id) B
+
+OR 
+
+
+select min(log_id) as start_id, max(log_id) as end_id from (
+select log_id,log_id-row_number() over(order by log_id) as diff from logs) a group by a.diff
